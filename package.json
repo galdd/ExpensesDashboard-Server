@@ -1,0 +1,23 @@
+{
+  "name": "expensesdashboard-server",
+  "version": "1.0.0",
+  "description": "Expenses Dashboard Server\" is a backend service providing APIs for tracking and managing personal and group expenses with a user-friendly interface.",
+  "main": "./dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./dist/index.js",
+    "dev": "concurrently \"tsc --watch\" \"nodemon -q dist/index.js\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.14.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.1.3"
+  }
+}
