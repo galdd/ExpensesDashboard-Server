@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { Timestamp } from "src/db";
+import { Timestamp } from "../../../db";
 
 interface Creator {
   _id: mongoose.Types.ObjectId;
