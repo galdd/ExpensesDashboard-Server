@@ -1,7 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { Timestamp } from "../../../db";
 
-
 export interface User extends Document, Timestamp {
   name: string;
   phone: string;
