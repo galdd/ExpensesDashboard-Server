@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import { connect } from "./db";
 
-import { initSocket } from "./socket";
+import { initSocket } from "./services/socket";
 import { routes } from "./routes";
 
 
