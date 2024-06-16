@@ -1,8 +1,10 @@
 import * as dotenv from "dotenv";
 import { Request, Response, NextFunction } from "express";
 import { auth, AuthResult } from "express-oauth2-jwt-bearer";
-import { UserModel } from "../../features/users/users.model";
-import { AuthRequest } from "../../db";
+import { UserModel } from "src/routes/features/users/users.model";
+
+import { AuthRequest } from "../types/@types";
+
 dotenv.config();
 
 export const checkJwt = auth({
