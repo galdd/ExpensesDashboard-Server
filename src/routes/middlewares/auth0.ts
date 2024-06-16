@@ -1,9 +1,9 @@
 import * as dotenv from "dotenv";
 import { Request, Response, NextFunction } from "express";
 import { auth, AuthResult } from "express-oauth2-jwt-bearer";
-import { UserModel } from "src/routes/features/users/users.model";
+import { UserModel } from "../../routes/features/users/users.model";
 
-import { AuthRequest } from "../types/@types";
+import { AuthRequest } from "../../types/@types";
 
 dotenv.config();
 

@@ -12,7 +12,7 @@ import { ExpensesListModel } from "./expenses-list.model";
 import { getIO } from "../../../services/socket";
 import { AuthRequest } from "../../../types/@types";
 import { NotificationModel } from "../notifications/notifications.model";
-import { validateResource } from "../../../middleware";
+import { validateResource } from "../../middlewares/validate-resource";
 
 export const router = Router();
 

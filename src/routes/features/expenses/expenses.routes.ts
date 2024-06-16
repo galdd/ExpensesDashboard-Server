@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import status from "http-status";
 import { ID, returnNew } from "../../../db";
-import { validateResource } from "../../../middleware";
+
 import { ExpensesModel, Expense, ExpenseWithListId } from "./expenses.model";
 import { ExpensesListModel } from "../expenses-list/expenses-list.model";
 import { AuthRequest } from "../../../types/@types";
@@ -10,8 +10,9 @@ import {
   expenseIdSchema,
   updateExpensesSchema,
 } from "./expenses.routes-schema";
-import { getIO } from "../../../services/socket.io";
+import { getIO } from "../../../services/socket";
 import { NotificationModel } from "../notifications/notifications.model";
+import { validateResource } from "../../middlewares";
 
 export const router = Router();
 

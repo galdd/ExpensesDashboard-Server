@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
-import { Timestamp } from "../../db";
+import { Timestamp } from "../../../db";
 import { Expense } from "../expenses/expenses.model"; // Import the missing 'Expenses' type
 
 export interface ExpensesList extends Document, Timestamp {

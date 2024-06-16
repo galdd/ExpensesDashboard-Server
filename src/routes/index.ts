@@ -4,7 +4,7 @@ import expenses from "./features/expenses";
 import expensesList from "./features/expenses-list";
 
 import stats from "./features/stats";
-import dialogflow from "./features/dialogflow/dialogflow.route";
+import dialogflow from "../services/dialogflow";
 import {
   errorHandler,
   catchAllRequestsLastRouteHandler,

@@ -1,13 +1,14 @@
 import { Router, Request, Response } from "express";
 import status from "http-status";
-import { returnNew, UserAuth } from "../../db";
-import { validateResource } from "../../routes/middlewares";
+
+import { validateResource } from "../../../routes/middlewares";
 import {
   baseUserSchemaNoId,
   userIdSchema,
   updateUserSchema,
 } from "./users.routes-schema";
 import { UserModel } from "./users.model";
+import { returnNew } from "../../../db";
 
 const router = Router();
 
