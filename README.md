@@ -2,7 +2,7 @@
 
 # Expenses Server
 
-## Node.js + Express + MongoDB
+## Node.js + TypeScript + Express + MongoDB 
 
 ### Table of Contents
 - [Expenses Server](#expenses-server)
@@ -45,13 +45,3 @@ To set up the project locally, follow these steps:
    ```bash
    git clone https://github.com/galdd/ExpensesDashboard-Server.git
 
-.env File
-PORT=1337
-DBUri=mongodb://
-AUTH0_DOMAIN=
-AUTH0_AUDIENCE=
-OPENAI_API_KEY=
-GOOGLE_PROJECT_ID=
-GOOGLE_APPLICATION_CREDENTIALS=
-
-config/{GOOGLE_APPLICATION_CREDENTIALS}
