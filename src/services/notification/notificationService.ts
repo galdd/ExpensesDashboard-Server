@@ -10,6 +10,8 @@ interface NotificationProps {
   listName: string;
   creatorName: string;
   avatarSrc: string;
+  expenseDescription?: string;
+  price?: number;
 }
 
 export const createAndEmitNotification = async ({
@@ -20,6 +22,8 @@ export const createAndEmitNotification = async ({
   listName,
   creatorName,
   avatarSrc,
+  expenseDescription,
+  price,
 }: NotificationProps) => {
   const io = getIO();
 
@@ -28,9 +32,11 @@ export const createAndEmitNotification = async ({
     type,
     action,
     avatarSrc,
-    listName: listId,
+    listName, 
     timestamp: new Date().toISOString(),
     creatorName,
+    expenseDescription,
+    price,
   });
 
   await notification.save();
@@ -44,6 +50,8 @@ export const createAndEmitNotification = async ({
       creatorName,
       timestamp: new Date().toISOString(),
       action,
+      expenseDescription,
+      price,
     },
   });
 };

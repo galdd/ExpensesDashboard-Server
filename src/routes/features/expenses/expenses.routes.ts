@@ -1,12 +1,13 @@
 import { Router, Request, Response } from "express";
 import status from "http-status";
 import { ID, returnNew } from "../../../db";
-import { ExpensesModel, Expense, ExpenseWithListId } from "./expenses.model";
+import { ExpensesModel } from "./expenses.model";
 import { ExpensesListModel } from "../expenses-list/expenses-list.model";
 import { AuthRequest } from "../../../types/@types";
 import { baseExpensesSchemaNoId, expenseIdSchema, updateExpensesSchema } from "./expenses.routes-schema";
 import { validateResource } from "../../middlewares";
 import { createAndEmitNotification } from "../../../services/notification/notificationService";
+import { NotificationModel } from "../notifications/notifications.model";
 
 export const router = Router();
 
@@ -25,25 +26,25 @@ router.post(
   async (req: Request, res: Response) => {
     try {
       const authReq = req as AuthRequest;
-      const { listId, ...expenseData } = authReq.body;
+
       const creator = authReq.userId;
 
       if (!creator) {
         return res.status(status.UNAUTHORIZED).json({ message: "User not authenticated" });
       }
 
-      const newExpense = await ExpensesModel.create({ ...expenseData, creator });
+      const newExpense = await ExpensesModel.create({ ...authReq.body, creator });
       await newExpense.populate("creator", "name photo");
 
-      if (listId) {
+      if (authReq.body.listId) {
         const list = await ExpensesListModel.findByIdAndUpdate(
-          listId,
+          authReq.body.listId,
           { $push: { expenses: newExpense._id } },
           { new: true }
         );
 
         if (list) {
-          await createAndEmitNotification({
+          const notificationData = {
             userId: creator,
             type: "expense",
             action: "add",
@@ -53,12 +54,16 @@ router.post(
             avatarSrc: newExpense.creator.photo,
             expenseDescription: newExpense.name,
             price: newExpense.price,
-          });
+            timestamp: new Date().toISOString(),
+          };
+
+          await createAndEmitNotification(notificationData);
         }
       }
 
       res.status(status.CREATED).json(newExpense);
     } catch (error) {
+      console.error('Error creating expense:', error);
       res.status(status.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
   }
@@ -102,7 +107,7 @@ router.put(
 
       const list = await ExpensesListModel.findById(req.body.listId);
 
-      await createAndEmitNotification({
+      const notificationData = {
         userId: authReq.userId,
         type: "expense",
         action: "update",
@@ -112,7 +117,10 @@ router.put(
         avatarSrc: updatedExpense.creator.photo,
         expenseDescription: updatedExpense.name,
         price: updatedExpense.price,
-      });
+        timestamp: new Date().toISOString(),
+      };
+
+      await createAndEmitNotification(notificationData);
 
       res.status(status.OK).json(updatedExpense);
     } catch (error) {
@@ -145,7 +153,7 @@ router.delete(
 
       const list = await ExpensesListModel.findById(listId as string);
 
-      await createAndEmitNotification({
+      const notificationData = {
         userId: authReq.userId,
         type: "expense",
         action: "remove",
@@ -155,7 +163,10 @@ router.delete(
         avatarSrc: deletedExpense.creator.photo,
         expenseDescription: deletedExpense.name,
         price: deletedExpense.price,
-      });
+        timestamp: new Date().toISOString(),
+      };
+
+      await createAndEmitNotification(notificationData);
 
       res.status(status.OK).json(deletedExpense);
     } catch (error) {
