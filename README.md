@@ -2,7 +2,7 @@
 
 # Expenses Server
 
-## Node.js + Express + MongoDB
+## Node.js + TypeScript + Express + MongoDB 
 
 ### Table of Contents
 - [Expenses Server](#expenses-server)
