@@ -36,7 +36,7 @@ export const createAndEmitNotification = async ({
     timestamp: new Date().toISOString(),
     creatorName,
     expenseDescription,
-    price,
+    price ,
   });
 
   await notification.save();
