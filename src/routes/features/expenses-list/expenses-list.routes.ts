@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import status from "http-status";
-import { Expense } from "../expenses/expenses.model";
+import { Expense, ExpensesModel } from "../expenses/expenses.model";
 import { UserModel } from "../users/users.model";
 import {
   baseExpensesListSchemaNoId,
@@ -158,6 +158,9 @@ router.delete(
         return res.status(status.NOT_FOUND).json({ message: "List not found" });
       }
 
+      // מחיקת כל ההוצאות שקשורות לרשימה
+      await ExpensesModel.deleteMany({ _id: { $in: deletedList.expenses } });
+
       const user = await UserModel.findById(userId);
 
       if (!user) {
@@ -174,7 +177,7 @@ router.delete(
         avatarSrc: user.photo,
       });
 
-      res.status(status.OK).json({ message: "List deleted successfully" });
+      res.status(status.OK).json({ message: "List and related expenses deleted successfully" });
     } catch (error) {
       res.status(status.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
