@@ -1,14 +1,12 @@
----
 
-# Expenses Server
+# Expenses Dashboard Server
 
 ## Node.js + TypeScript + Express + MongoDB 
 
 ### Table of Contents
 - [Expenses Server](#expenses-server)
-  - [Node.js + Express + MongoDB](#nodejs--express--mongodb)
+  - [Node.js + TypeScript + Express + MongoDB](#nodejs--typescript--express--mongodb)
     - [Table of Contents](#table-of-contents)
-    - [Links](#links)
     - [About the Project](#about-the-project)
     - [Project Description](#project-description)
       - [Authentication](#authentication)
@@ -44,4 +42,4 @@ To set up the project locally, follow these steps:
 1. Clone the repository:
    ```bash
    git clone https://github.com/galdd/ExpensesDashboard-Server.git
-
+   cd ExpensesDashboard-Server
