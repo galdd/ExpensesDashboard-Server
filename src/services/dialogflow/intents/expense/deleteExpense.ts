@@ -1,17 +1,19 @@
-// deleteExpense.js
-
-import { ExpensesListModel } from "../../../../routes/features/expenses-list/expenses-list.model";
 import { ExpensesModel } from "../../../../routes/features/expenses/expenses.model";
+import { ExpensesListModel } from "../../../../routes/features/expenses-list/expenses-list.model";
 
-export const deleteExpense = async (id: string) => {
-  const expense = await ExpensesModel.findByIdAndDelete(id);
+export const deleteExpense = async (expenseId: string, listId: string) => {
+  const expense = await ExpensesModel.findByIdAndDelete(expenseId);
   if (!expense) {
-    throw new Error(`Expense with id "${id}" not found.`);
+    throw new Error(`Expense with id "${expenseId}" not found.`);
   }
-  const list = await ExpensesListModel.findById(expense.listId);
-  if (list) {
-    list.expenses.pull(expense._id);
-    await list.save();
+
+  const list = await ExpensesListModel.findById(listId);
+  if (!list) {
+    throw new Error(`List with id "${listId}" not found.`);
   }
-  return expense;
+
+  list.expenses = list.expenses.filter(expId => expId.toString() !== expenseId);
+  await list.save();
+
+  return { expenseId, listId };
 };

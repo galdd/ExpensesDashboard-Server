@@ -240,13 +240,23 @@ export const handleDialogFlowRequest = async (req: Request, res: Response) => {
                 try {
                   const originalDeleteExpenseName = getOriginalName(originalQuery, deleteExpenseName);
                   const originalDeleteExpenseListName = getOriginalName(originalQuery, deleteExpenseListName);
-                  const expense = await ExpensesModel.findOne({ name: originalDeleteExpenseName, listId: originalDeleteExpenseListName });
+                  console.log("Original delete expense name:", originalDeleteExpenseName, "|", "Original delete list name:", originalDeleteExpenseListName);
+            
+                  const list = await ExpensesListModel.findOne({ name: originalDeleteExpenseListName }).populate("expenses");
+                  if (!list) {
+                    throw new Error(`List "${originalDeleteExpenseListName}" not found.`);
+                  }
+                  
+                  const expense = list.expenses.find(exp => exp.name === originalDeleteExpenseName);
                   if (!expense) {
                     throw new Error(`Expense "${originalDeleteExpenseName}" not found in list "${originalDeleteExpenseListName}".`);
                   }
-                  await deleteExpense(expense._id);
+            
+                  await deleteExpense(expense._id, list._id);
                   res.json({
                     response: `Expense "${originalDeleteExpenseName}" deleted successfully from list "${originalDeleteExpenseListName}".`,
+                    expenseId: expense._id,
+                    listId: list._id,
                     intent: "delete_expense",
                   });
                 } catch (error) {
