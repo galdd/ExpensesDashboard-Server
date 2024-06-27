@@ -6,8 +6,6 @@ import { ExpensesListModel } from "../expenses-list/expenses-list.model";
 import { AuthRequest } from "../../../types/@types";
 import { baseExpensesSchemaNoId, expenseIdSchema, updateExpensesSchema } from "./expenses.routes-schema";
 import { validateResource } from "../../middlewares";
-import { createAndEmitNotification } from "../../../services/notification/notificationService";
-import { NotificationModel } from "../notifications/notifications.model";
 
 export const router = Router();
 
@@ -37,28 +35,11 @@ router.post(
       await newExpense.populate("creator", "name photo");
 
       if (authReq.body.listId) {
-        const list = await ExpensesListModel.findByIdAndUpdate(
+        await ExpensesListModel.findByIdAndUpdate(
           authReq.body.listId,
           { $push: { expenses: newExpense._id } },
           { new: true }
         );
-
-        if (list) {
-          const notificationData = {
-            userId: creator,
-            type: "expense",
-            action: "add",
-            listId: list._id,
-            listName: list.name,
-            creatorName: newExpense.creator.name,
-            avatarSrc: newExpense.creator.photo,
-            expenseDescription: newExpense.name,
-            price: newExpense.price,
-            timestamp: new Date().toISOString(),
-          };
-
-          await createAndEmitNotification(notificationData);
-        }
       }
 
       res.status(status.CREATED).json(newExpense);
@@ -105,23 +86,6 @@ router.put(
         return res.sendStatus(status.NOT_FOUND);
       }
 
-      const list = await ExpensesListModel.findById(req.body.listId);
-
-      const notificationData = {
-        userId: authReq.userId,
-        type: "expense",
-        action: "update",
-        listId: list ? list._id : req.body.listId,
-        listName: list ? list.name : req.body.listId,
-        creatorName: updatedExpense.creator.name,
-        avatarSrc: updatedExpense.creator.photo,
-        expenseDescription: updatedExpense.name,
-        price: updatedExpense.price,
-        timestamp: new Date().toISOString(),
-      };
-
-      await createAndEmitNotification(notificationData);
-
       res.status(status.OK).json(updatedExpense);
     } catch (error) {
       res.status(status.INTERNAL_SERVER_ERROR).json({ message: error.message });
@@ -150,23 +114,6 @@ router.delete(
       if (listId) {
         await ExpensesListModel.findByIdAndUpdate(listId as string, { $pull: { expenses: req.params.id } }, { new: true });
       }
-
-      const list = await ExpensesListModel.findById(listId as string);
-
-      const notificationData = {
-        userId: authReq.userId,
-        type: "expense",
-        action: "remove",
-        listId: list ? list._id : (listId as string),
-        listName: list ? list.name : (listId as string),
-        creatorName: deletedExpense.creator.name,
-        avatarSrc: deletedExpense.creator.photo,
-        expenseDescription: deletedExpense.name,
-        price: deletedExpense.price,
-        timestamp: new Date().toISOString(),
-      };
-
-      await createAndEmitNotification(notificationData);
 
       res.status(status.OK).json(deletedExpense);
     } catch (error) {

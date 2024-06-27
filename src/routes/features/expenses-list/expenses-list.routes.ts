@@ -10,7 +10,6 @@ import {
 import { ExpensesListModel } from "./expenses-list.model";
 import { AuthRequest } from "../../../types/@types";
 import { validateResource } from "../../middlewares/validate-resource";
-import { createAndEmitNotification } from "../../../services/notification/notificationService";
 
 const router = Router();
 
@@ -81,16 +80,6 @@ router.post(
       const newList = new ExpensesListModel({ name, creator: user._id, expenses: [], users_ids: [] });
       const savedList = await newList.save();
 
-      await createAndEmitNotification({
-        userId,
-        type: "list",
-        action: "add",
-        listId: savedList._id,
-        listName: savedList.name,
-        creatorName: user.name,
-        avatarSrc: user.photo,
-      });
-
       res.status(status.CREATED).json(savedList);
     } catch (error) {
       res.status(status.INTERNAL_SERVER_ERROR).json({ message: error.message });
@@ -127,16 +116,6 @@ router.put(
         return res.status(status.NOT_FOUND).json({ message: "List not found" });
       }
 
-      await createAndEmitNotification({
-        userId,
-        type: "list",
-        action: "update",
-        listId: updatedList._id,
-        listName: updatedList.name,
-        creatorName: user.name,
-        avatarSrc: user.photo,
-      });
-
       res.status(status.OK).json(updatedList);
     } catch (error) {
       res.status(status.INTERNAL_SERVER_ERROR).json({ message: error.message });
@@ -157,25 +136,6 @@ router.delete(
       if (!deletedList) {
         return res.status(status.NOT_FOUND).json({ message: "List not found" });
       }
-
-      // מחיקת כל ההוצאות שקשורות לרשימה
-      await ExpensesModel.deleteMany({ _id: { $in: deletedList.expenses } });
-
-      const user = await UserModel.findById(userId);
-
-      if (!user) {
-        return res.status(status.NOT_FOUND).json({ message: "User not found." });
-      }
-
-      await createAndEmitNotification({
-        userId,
-        type: "list",
-        action: "remove",
-        listId: deletedList._id,
-        listName: deletedList.name,
-        creatorName: user.name,
-        avatarSrc: user.photo,
-      });
 
       res.status(status.OK).json({ message: "List and related expenses deleted successfully" });
     } catch (error) {
