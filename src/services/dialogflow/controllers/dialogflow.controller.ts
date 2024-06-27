@@ -65,8 +65,8 @@ export const handleDialogFlowRequest = async (req: Request, res: Response) => {
     const parameters = result.parameters.fields;
     const originalQuery = result.queryText;
 
-    // console.log("result:", result);
-    // console.log("parameters:", parameters);
+     console.log("result:", result);
+     console.log("parameters:", parameters);
 
     const getOriginalListName = (query: string, listName: string): string => {
       const regex = new RegExp(`\\b${listName}\\b`, "i");
@@ -95,27 +95,27 @@ export const handleDialogFlowRequest = async (req: Request, res: Response) => {
         }
         break;
 
-      case "update_list":
-        const oldListName = parameters.oldListName.stringValue;
-        const newListName = parameters.newListName.stringValue;
-        if (!oldListName || !newListName) {
-          res.status(400).json({ response: "Old list name and new list name are required." });
-        } else {
-          try {
-            const originalOldListName = getOriginalListName(originalQuery, oldListName);
-            const originalNewListName = getOriginalListName(originalQuery, newListName);
-            const updatedList = await updateList(originalOldListName, originalNewListName);
-            res.json({
-              response: `List "${originalOldListName}" updated to "${originalNewListName}" successfully.`,
-              list: updatedList,
-              intent: "update_list",
-            });
-          } catch (error) {
-            console.error("Error updating list:", error.message);
-            handleErrorResponse(res, error.message);
+        case "update_list":
+          const oldListName = parameters.oldListName?.stringValue;
+          const newListName = parameters.newListName?.stringValue;
+          if (!oldListName || !newListName) {
+            res.status(400).json({ response: "Old list name and new list name are required." });
+          } else {
+            try {
+              const originalOldListName = getOriginalName(originalQuery, oldListName);
+              const originalNewListName = getOriginalName(originalQuery, newListName);
+              const updatedList = await updateList(originalOldListName, originalNewListName);
+              res.json({
+                response: `List "${originalOldListName}" updated to "${originalNewListName}" successfully.`,
+                list: updatedList,
+                intent: "update_list",
+              });
+            } catch (error) {
+              console.error("Error updating list:", error.message);
+              handleErrorResponse(res, error.message);
+            }
           }
-        }
-        break;
+          break;
 
       case "delete_list":
         const listNameToDelete = parameters.listName.stringValue;
