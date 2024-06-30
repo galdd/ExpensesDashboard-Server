@@ -130,3 +130,5 @@ dist
 .pnp.*
 
 config/
+dump.rdb
+ecosystem.config.cjs
