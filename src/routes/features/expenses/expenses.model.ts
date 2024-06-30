@@ -79,20 +79,22 @@ expenseSchema.post('findOneAndUpdate', async function (doc) {
 });
 
 expenseSchema.post('findOneAndDelete', async function (doc) {
-  const user = await UserModel.findById(doc.creator._id);
-  if (user) {
-    await createAndEmitNotification({
-      userId: user._id,
-      type: 'expense',
-      action: 'remove',
-      listId: doc.listId,
-      listName: doc.name,
-      creatorName: user.name,
-      avatarSrc: user.photo,
-      expenseDescription: doc.name,
-      price: doc.price,
-      timestamp: new Date().toISOString(),
-    });
+  if (doc) {
+    const user = await UserModel.findById(doc.creator._id);
+    if (user) {
+      await createAndEmitNotification({
+        userId: user._id,
+        type: 'expense',
+        action: 'remove',
+        listId: doc.listId,
+        listName: doc.name,
+        creatorName: user.name,
+        avatarSrc: user.photo,
+        expenseDescription: doc.name,
+        price: doc.price,
+        timestamp: new Date().toISOString(),
+      });
+    }
   }
 });
 

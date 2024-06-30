@@ -1,17 +1,17 @@
 import { Server } from "socket.io";
 import { createAdapter } from "@socket.io/redis-adapter";
 import { createClient } from "redis";
+import http from "http";
 
 let io: Server;
 
-export const initSocket = (server: any) => {
+export const initSocket = (server: http.Server) => {
   io = new Server(server, {
     cors: {
       origin: "http://localhost:3000", // adjust this to your client URL
       methods: ["GET", "POST"],
     },
   });
-
 
   const pubClient = createClient({ url: "redis://localhost:6379" });
   const subClient = pubClient.duplicate();
