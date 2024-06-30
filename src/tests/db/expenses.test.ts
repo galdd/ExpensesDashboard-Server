@@ -16,8 +16,9 @@ afterAll(async () => {
   await disconnect();
 });
 
+// #Create: Tests for creating expenses
 describe("Expense Model", () => {
-  // #Create: Test case for creating a new expense
+  // Test case for creating a new expense
   it("should create a new expense", async () => {
     const creatorId = new Types.ObjectId();
     const expenseData: Partial<Expense> = {
@@ -39,8 +40,9 @@ describe("Expense Model", () => {
   });
 });
 
+// #Create: Tests for handling invalid data during creation
 describe("Expense Model negative tests", () => {
-  // #Create: Test case for handling invalid data during creation
+  // Test case for handling invalid data during creation
   it("should not create an expense with invalid data", async () => {
     const invalidExpenseData = {
       name: "",
@@ -60,6 +62,7 @@ describe("Expense Model negative tests", () => {
   });
 });
 
+// #CRUD: Tests for CRUD operations on expenses
 describe("Expense Model CRUD Operations", () => {
   let createdExpenseId: Types.ObjectId;
   const creatorId = new Types.ObjectId();

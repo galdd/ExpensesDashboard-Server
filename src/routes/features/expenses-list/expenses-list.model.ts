@@ -38,34 +38,40 @@ expensesListSchema.post('save', async function (doc) {
 });
 
 expensesListSchema.post('findOneAndUpdate', async function (doc) {
-  const user = await UserModel.findById(doc.creator);
-  if (user) {
-    await createAndEmitNotification({
-      userId: user._id,
-      type: 'list',
-      action: 'update',
-      listId: doc._id,
-      listName: doc.name,
-      creatorName: user.name,
-      avatarSrc: user.photo,
-      timestamp: new Date().toISOString(),
-    });
+  if (doc) {
+    const user = await UserModel.findById(doc.creator);
+    if (user) {
+      await createAndEmitNotification({
+        userId: user._id,
+        type: 'list',
+        action: 'update',
+        listId: doc._id,
+        listName: doc.name,
+        creatorName: user.name,
+        avatarSrc: user.photo,
+        timestamp: new Date().toISOString(),
+      });
+    }
   }
 });
 
 expensesListSchema.post('findOneAndDelete', async function (doc) {
-  const user = await UserModel.findById(doc.creator);
-  if (user) {
-    await createAndEmitNotification({
-      userId: user._id,
-      type: 'list',
-      action: 'remove',
-      listId: doc._id,
-      listName: doc.name,
-      creatorName: user.name,
-      avatarSrc: user.photo,
-      timestamp: new Date().toISOString(),
-    });
+  if (doc) {
+    const user = await UserModel.findById(doc.creator);
+    if (user) {
+      await createAndEmitNotification({
+        userId: user._id,
+        type: 'expensesList',
+        action: 'remove',
+        listId: doc._id,
+        listName: doc.name,
+        creatorName: user.name,
+        avatarSrc: user.photo,
+        expenseDescription: doc.name,
+        price: 0,
+        timestamp: new Date().toISOString(),
+      });
+    }
   }
 });
 
