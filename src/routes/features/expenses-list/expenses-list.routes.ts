@@ -10,6 +10,8 @@ import {
 import { ExpensesListModel } from "./expenses-list.model";
 import { AuthRequest } from "../../../types/@types";
 import { validateResource } from "../../middlewares/validate-resource";
+import { createList } from "../../../services/actions/list/createList";
+import { deleteList } from "../../../services/actions/list/deleteList";
 
 const router = Router();
 
@@ -77,10 +79,8 @@ router.post(
         return res.status(status.NOT_FOUND).json({ message: "User not found." });
       }
 
-      const newList = new ExpensesListModel({ name, creator: user._id, expenses: [], users_ids: [] });
-      const savedList = await newList.save();
-
-      res.status(status.CREATED).json(savedList);
+      const newList = await createList(name, userId);
+      res.status(status.CREATED).json(newList);
     } catch (error) {
       res.status(status.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }

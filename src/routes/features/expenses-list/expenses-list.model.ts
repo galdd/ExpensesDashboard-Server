@@ -56,12 +56,14 @@ expensesListSchema.post('findOneAndUpdate', async function (doc) {
 });
 
 expensesListSchema.post('findOneAndDelete', async function (doc) {
+  console.log(doc ? doc : 'No document found');
+  
   if (doc) {
     const user = await UserModel.findById(doc.creator);
     if (user) {
       await createAndEmitNotification({
         userId: user._id,
-        type: 'expensesList',
+        type: 'list',
         action: 'remove',
         listId: doc._id,
         listName: doc.name,

@@ -1,5 +1,5 @@
-import { ExpensesModel } from "../../../../routes/features/expenses/expenses.model";
-import { ExpensesListModel } from "../../../../routes/features/expenses-list/expenses-list.model";
+import { ExpensesModel } from "../../../routes/features/expenses/expenses.model";
+import { ExpensesListModel } from "../../../routes/features/expenses-list/expenses-list.model";
 
 export const deleteExpense = async (expenseId: string, listId: string) => {
   const expense = await ExpensesModel.findByIdAndDelete(expenseId);
