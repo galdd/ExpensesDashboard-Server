@@ -71,7 +71,7 @@ describe("ExpensesList Model CRUD Operations", () => {
       creator: creatorId
     };
     const expensesList = await ExpensesListModel.create(expensesListData);
-    createdExpensesListId = expensesList._id;
+    createdExpensesListId = expensesList._id as Types.ObjectId; // Type assertion
 
     const foundExpensesList = await ExpensesListModel.findById(createdExpensesListId);
     expect(foundExpensesList).toBeTruthy();
@@ -93,7 +93,7 @@ describe("ExpensesList Model CRUD Operations", () => {
       creator: creatorId
     };
     const expensesList = await ExpensesListModel.create(expensesListData);
-    createdExpensesListId = expensesList._id;
+    createdExpensesListId = expensesList._id as Types.ObjectId; // Type assertion
 
     // Verify the existence of the document before update
     const existingExpensesList = await ExpensesListModel.findById(createdExpensesListId);

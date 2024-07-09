@@ -17,7 +17,9 @@ if (config.isProduction) {
   app.use(helmet());
   // app.use(morgan("combined"));
 } else {
-  app.use(morgan("dev"));
+  console.log("Development mode");
+  
+  app.use(morgan("combined"));
 }
 
 routes(app);

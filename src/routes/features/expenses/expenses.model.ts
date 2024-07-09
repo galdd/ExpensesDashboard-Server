@@ -14,12 +14,8 @@ export interface Expense extends Document, Timestamp {
   expenseDescription: string;
   price: number;
   date: Date;
-  creator: Creator;
+  creator: mongoose.Types.ObjectId;
   listId: Types.ObjectId;
-}
-
-export interface ExpenseWithListId extends Omit<Expense, "_id"> {
-  listId?: string;
 }
 
 const expenseSchema = new Schema<Expense>(
@@ -43,10 +39,10 @@ const expenseSchema = new Schema<Expense>(
 );
 
 expenseSchema.post('save', async function (doc) {
-  const user = await UserModel.findById(doc.creator._id);
+  const user = await UserModel.findById(doc.creator).exec();
   if (user) {
     await createAndEmitNotification({
-      userId: user._id,
+      userId: (user._id as mongoose.Types.ObjectId).toString(),
       type: 'expense',
       action: 'add',
       listId: doc.listId,
@@ -55,35 +51,35 @@ expenseSchema.post('save', async function (doc) {
       avatarSrc: user.photo,
       expenseDescription: doc.name,
       price: doc.price,
-      timestamp: new Date().toISOString(),
     });
   }
 });
 
 expenseSchema.post('findOneAndUpdate', async function (doc) {
-  const user = await UserModel.findById(doc.creator._id);
-  if (user) {
-    await createAndEmitNotification({
-      userId: user._id,
-      type: 'expense',
-      action: 'update',
-      listId: doc.listId,
-      listName: doc.name,
-      creatorName: user.name,
-      avatarSrc: user.photo,
-      expenseDescription: doc.name,
-      price: doc.price,
-      timestamp: new Date().toISOString(),
-    });
+  if (doc) {
+    const user = await UserModel.findById(doc.creator).exec();
+    if (user) {
+      await createAndEmitNotification({
+        userId: (user._id as mongoose.Types.ObjectId).toString(),
+        type: 'expense',
+        action: 'update',
+        listId: doc.listId,
+        listName: doc.name,
+        creatorName: user.name,
+        avatarSrc: user.photo,
+        expenseDescription: doc.name,
+        price: doc.price,
+      });
+    }
   }
 });
 
 expenseSchema.post('findOneAndDelete', async function (doc) {
   if (doc) {
-    const user = await UserModel.findById(doc.creator._id);
+    const user = await UserModel.findById(doc.creator).exec();
     if (user) {
       await createAndEmitNotification({
-        userId: user._id,
+        userId: (user._id as mongoose.Types.ObjectId).toString(),
         type: 'expense',
         action: 'remove',
         listId: doc.listId,
@@ -92,7 +88,6 @@ expenseSchema.post('findOneAndDelete', async function (doc) {
         avatarSrc: user.photo,
         expenseDescription: doc.name,
         price: doc.price,
-        timestamp: new Date().toISOString(),
       });
     }
   }

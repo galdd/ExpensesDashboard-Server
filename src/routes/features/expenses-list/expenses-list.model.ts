@@ -7,7 +7,7 @@ import { UserModel } from "../users/users.model";
 export interface ExpensesList extends Document, Timestamp {
   name: string;
   creator: Types.ObjectId | { name: string };
-  expenses: Expense[];
+  expenses: Types.ObjectId[];
   users_ids: Types.ObjectId[];
 }
 
@@ -25,14 +25,13 @@ expensesListSchema.post('save', async function (doc) {
   const user = await UserModel.findById(doc.creator);
   if (user) {
     await createAndEmitNotification({
-      userId: user._id,
+      userId: user._id as unknown as string, // Ensure it's a string
       type: 'list',
       action: 'add',
-      listId: doc._id,
+      listId: doc._id as unknown as Types.ObjectId, // Ensure it's ObjectId
       listName: doc.name,
       creatorName: user.name,
-      avatarSrc: user.photo,
-      timestamp: new Date().toISOString(),
+      avatarSrc: user.photo
     });
   }
 });
@@ -42,14 +41,13 @@ expensesListSchema.post('findOneAndUpdate', async function (doc) {
     const user = await UserModel.findById(doc.creator);
     if (user) {
       await createAndEmitNotification({
-        userId: user._id,
+        userId: user._id as unknown as string, // Ensure it's a string
         type: 'list',
         action: 'update',
-        listId: doc._id,
+        listId: doc._id as unknown as Types.ObjectId, // Ensure it's ObjectId
         listName: doc.name,
         creatorName: user.name,
-        avatarSrc: user.photo,
-        timestamp: new Date().toISOString(),
+        avatarSrc: user.photo
       });
     }
   }
@@ -62,16 +60,15 @@ expensesListSchema.post('findOneAndDelete', async function (doc) {
     const user = await UserModel.findById(doc.creator);
     if (user) {
       await createAndEmitNotification({
-        userId: user._id,
+        userId: user._id as unknown as string, // Ensure it's a string
         type: 'list',
         action: 'remove',
-        listId: doc._id,
+        listId: doc._id as unknown as Types.ObjectId, // Ensure it's ObjectId
         listName: doc.name,
         creatorName: user.name,
         avatarSrc: user.photo,
         expenseDescription: doc.name,
-        price: 0,
-        timestamp: new Date().toISOString(),
+        price: 0
       });
     }
   }

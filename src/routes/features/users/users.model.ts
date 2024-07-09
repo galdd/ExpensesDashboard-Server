@@ -1,12 +1,12 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, Types } from "mongoose";
 import { Timestamp } from "../../../db";
 
 export interface User extends Document, Timestamp {
   name: string;
   phone: string;
   photo: string;
-  password: string;
   auth0Id: string;
+  _id: Types.ObjectId;
 }
 
 const userSchema = new Schema<User>(
@@ -15,7 +15,6 @@ const userSchema = new Schema<User>(
     name: { type: String, required: true },
     phone: { type: String, required: false },
     photo: { type: String, required: false },
-    password: { type: String, required: false },
   },
   {
     timestamps: true,

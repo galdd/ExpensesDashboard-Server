@@ -78,7 +78,7 @@ describe("Expense Model CRUD Operations", () => {
       creator: creatorId
     };
     const expense = await ExpensesModel.create(expenseData);
-    createdExpenseId = expense._id;
+    createdExpenseId = expense._id as Types.ObjectId;
 
     const foundExpense = await ExpensesModel.findById(createdExpenseId);
     expect(foundExpense).toBeTruthy();

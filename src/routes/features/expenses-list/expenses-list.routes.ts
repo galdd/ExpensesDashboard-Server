@@ -39,25 +39,21 @@ router.get(
   "/",
   validateResource(paginationSchema),
   async (req: Request, res: Response) => {
-    try {
-      const { offset, limit, sortOrder } = req.query;
-      const lists = await ExpensesListModel.find({})
-        .populate("creator")
-        .populate({
-          path: "expenses",
-          populate: {
-            path: "creator",
-            select: "name photo",
-          },
-        })
-        .sort({ createdAt: sortOrder === "asc" ? 1 : -1 })
-        .skip(parseInt(offset as string))
-        .limit(parseInt(limit as string));
+    const { offset, limit, sortOrder } = req.query;
+    const lists = await ExpensesListModel.find({})
+      .populate("creator")
+      .populate({
+        path: "expenses",
+        populate: {
+          path: "creator",
+          select: "name photo",
+        },
+      })
+      .sort({ createdAt: sortOrder === "asc" ? 1 : -1 })
+      .skip(parseInt(offset as string))
+      .limit(parseInt(limit as string));
 
-      await sendResponseWithTotal(req, res, lists);
-    } catch (error) {
-      res.status(status.INTERNAL_SERVER_ERROR).json({ message: error.message });
-    }
+    await sendResponseWithTotal(req, res, lists);
   }
 );
 
@@ -65,25 +61,21 @@ router.post(
   "/",
   validateResource(baseExpensesListSchemaNoId),
   async (req: Request, res: Response) => {
-    try {
-      const { name } = req.body;
-      const { userId } = req as AuthRequest;
+    const { name } = req.body;
+    const { userId } = req as AuthRequest;
 
-      if (!name || !userId) {
-        return res.status(status.BAD_REQUEST).json({ message: "Name and creator are required." });
-      }
-
-      const user = await UserModel.findById(userId);
-
-      if (!user) {
-        return res.status(status.NOT_FOUND).json({ message: "User not found." });
-      }
-
-      const newList = await createList(name, userId);
-      res.status(status.CREATED).json(newList);
-    } catch (error) {
-      res.status(status.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    if (!name || !userId) {
+      return res.status(status.BAD_REQUEST).json({ message: "Name and creator are required." });
     }
+
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      return res.status(status.NOT_FOUND).json({ message: "User not found." });
+    }
+
+    const newList = await createList(name, userId);
+    res.status(status.CREATED).json(newList);
   }
 );
 
@@ -91,35 +83,31 @@ router.put(
   "/:id",
   validateResource(baseExpensesListSchemaNoId),
   async (req: Request, res: Response) => {
-    try {
-      const { id } = req.params;
-      const { name } = req.body;
-      const { userId } = req as AuthRequest;
+    const { id } = req.params;
+    const { name } = req.body;
+    const { userId } = req as AuthRequest;
 
-      if (!name || !userId) {
-        return res.status(status.BAD_REQUEST).json({ message: "Name and creator are required." });
-      }
-
-      const user = await UserModel.findById(userId);
-
-      if (!user) {
-        return res.status(status.NOT_FOUND).json({ message: "User not found." });
-      }
-
-      const updatedList = await ExpensesListModel.findByIdAndUpdate(
-        id,
-        { name, creator: user._id },
-        { new: true, runValidators: true }
-      );
-
-      if (!updatedList) {
-        return res.status(status.NOT_FOUND).json({ message: "List not found" });
-      }
-
-      res.status(status.OK).json(updatedList);
-    } catch (error) {
-      res.status(status.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    if (!name || !userId) {
+      return res.status(status.BAD_REQUEST).json({ message: "Name and creator are required." });
     }
+
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      return res.status(status.NOT_FOUND).json({ message: "User not found." });
+    }
+
+    const updatedList = await ExpensesListModel.findByIdAndUpdate(
+      id,
+      { name, creator: user._id },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedList) {
+      return res.status(status.NOT_FOUND).json({ message: "List not found" });
+    }
+
+    res.status(status.OK).json(updatedList);
   }
 );
 
@@ -127,20 +115,16 @@ router.delete(
   "/:id",
   validateResource(queryParamsValidator),
   async (req: Request, res: Response) => {
-    try {
-      const { id } = req.params;
-      const { userId } = req as AuthRequest;
+    const { id } = req.params;
+    const { userId } = req as AuthRequest;
 
-      const deletedList = await ExpensesListModel.findByIdAndDelete(id);
+    const deletedList = await ExpensesListModel.findByIdAndDelete(id);
 
-      if (!deletedList) {
-        return res.status(status.NOT_FOUND).json({ message: "List not found" });
-      }
-
-      res.status(status.OK).json({ message: "List and related expenses deleted successfully" });
-    } catch (error) {
-      res.status(status.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    if (!deletedList) {
+      return res.status(status.NOT_FOUND).json({ message: "List not found" });
     }
+
+    res.status(status.OK).json({ message: "List and related expenses deleted successfully" });
   }
 );
 

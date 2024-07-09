@@ -6,11 +6,17 @@ import { connect } from "./db";
 import { initSocket } from "./services/socket";
 import config from "../config/config";
 
+console.log(`Current Environment: ${config.isProduction ? 'Production' : 'Development'}`);
+
 const createServer = () => {
   if (config.isProduction && config.ssl) {
+    const { key, cert } = config.ssl;
+    if (!fs.existsSync(key) || !fs.existsSync(cert)) {
+      throw new Error("SSL key or certificate file not found.");
+    }
     const sslOptions = {
-      key: fs.readFileSync(config.ssl.key),
-      cert: fs.readFileSync(config.ssl.cert),
+      key: fs.readFileSync(key),
+      cert: fs.readFileSync(cert),
     };
     return https.createServer(sslOptions, app);
   }

@@ -18,11 +18,11 @@ import { healthCheck } from "./middlewares";
 
 export const routes = (app: Express) => {
   app.get(...healthCheck);
-  app.use(checkJwt, () => {});
+  app.use(checkJwt);
   app.use(extractUserInfo);
-  app.use(...users);
   app.use(checkUserExists);
-  app.use(...dialogflow); // Adding the Dialogflow route
+  app.use(...users);
+  app.use(...dialogflow);
   app.use(...expenses);
   app.use(...expensesList);
   app.use(...notifications);

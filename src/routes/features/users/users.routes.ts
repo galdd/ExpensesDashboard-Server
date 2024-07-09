@@ -7,8 +7,10 @@ import {
   userIdSchema,
   updateUserSchema,
 } from "./users.routes-schema";
+import { UserAuth } from "../../../types/@types";
 import { UserModel } from "./users.model";
 import { returnNew } from "../../../db";
+
 
 const router = Router();
 
@@ -48,6 +50,8 @@ router.delete(
   validateResource(userIdSchema),
   async (req: Request, res: Response) => {
     const deleteUser = await UserModel.findByIdAndDelete(req.params.id);
+    console.log("asdd");
+    
 
     if (!deleteUser) {
       return res.sendStatus(status.NOT_FOUND);

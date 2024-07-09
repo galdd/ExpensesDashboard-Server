@@ -12,6 +12,13 @@ export interface UserRequest extends Request {
   userId?: string;
 }
 
+export interface UserAuth {
+  user?: {
+    sub: string;
+  };
+}
+
+
 export interface AuthRequest extends Request {
   auth?: AuthResult & {
     payload: {
